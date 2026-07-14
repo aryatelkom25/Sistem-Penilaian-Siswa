@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Penilaian Peserta Didik</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-top: #0b457e;
@@ -39,7 +39,6 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: -2;
-            /* Simulasi Awan Sederhana dengan Radial Gradient */
             background-image: 
                 radial-gradient(circle at 15% 30%, rgba(255,255,255,0.08) 0%, transparent 20%),
                 radial-gradient(circle at 85% 20%, rgba(255,255,255,0.06) 0%, transparent 15%),
@@ -74,23 +73,15 @@
             box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
         }
 
-        .logo-icon svg {
-            width: 45px; height: 45px;
-            fill: var(--primary-blue);
-        }
-
-        .logo-text {
-            color: var(--primary-blue);
-            line-height: 1.1;
-        }
-
+        .logo-icon svg { width: 45px; height: 45px; fill: var(--primary-blue); }
+        .logo-text { color: var(--primary-blue); line-height: 1.1; }
         .logo-text h1 { font-size: 1.2rem; font-weight: 800; }
         .logo-text p { font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; }
 
         /* --- LAYOUT UTAMA --- */
         main {
             flex: 1;
-            display: flex;
+            display: none; /* Diatur via JS */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -98,17 +89,12 @@
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            display: none; /* Diatur via JS */
         }
+        main.active { display: flex; }
 
-        main.active {
-            display: flex;
-        }
-
-        /* ================= HALAMAN 1: HERO & MATPEL ================= */
+        /* ================= HALAMAN 1: PILIH MATPEL ================= */
         .hero-images {
             height: 180px;
-            width: 320px;
             position: relative;
             margin-bottom: 10px;
             display: flex;
@@ -116,334 +102,141 @@
             align-items: flex-end;
             z-index: 2;
         }
-        
-        .hero-images img {
-            max-height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
-        }
+        .hero-images img { max-height: 100%; object-fit: contain; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); }
 
-        .title-wrapper {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 30px;
-            z-index: 2;
-        }
-
+        .title-wrapper { text-align: center; display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; z-index: 2; }
         .badge-sistem {
-            background: var(--accent-blue);
-            border: 2px solid var(--white);
-            padding: 4px 40px;
-            font-size: 1rem;
-            font-weight: 800;
-            letter-spacing: 2px;
+            background: var(--accent-blue); border: 2px solid var(--white);
+            padding: 4px 40px; font-size: 1rem; font-weight: 800; letter-spacing: 2px;
             clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
-            margin-bottom: -5px; /* Menumpuk dengan teks utama */
-            z-index: 3;
+            margin-bottom: -5px; z-index: 3;
         }
+        .title-main { font-size: 3.5rem; font-weight: 900; font-style: italic; line-height: 1; text-shadow: 0 4px 6px rgba(0,0,0,0.4); text-transform: uppercase; }
+        .subtitle-pill { border: 1.5px solid var(--white); padding: 8px 30px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; margin-top: 15px; background: rgba(0,0,0,0.1); }
+        .academic-year { margin-top: 15px; font-size: 1.2rem; font-weight: 700; }
 
-        .title-main {
-            font-size: 3.5rem;
-            font-weight: 800;
-            font-style: italic;
-            line-height: 1;
-            text-shadow: 0 4px 6px rgba(0,0,0,0.4);
-            text-transform: uppercase;
-        }
-
-        .subtitle-pill {
-            border: 1.5px solid var(--white);
-            padding: 8px 30px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-top: 15px;
-            background: rgba(0,0,0,0.1);
-        }
-
-        .academic-year {
-            margin-top: 15px;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        /* Custom Dropdown (Sesuai Gambar 1) */
+        /* Dropdown Kustom */
         .dropdown-container {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 25px 30px;
-            width: 100%;
-            max-width: 480px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 5;
+            background: var(--white); border-radius: 15px; padding: 25px 30px;
+            width: 100%; max-width: 480px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; z-index: 5;
         }
-
-        .dropdown-label {
-            color: var(--text-dark);
-            font-weight: 800;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .custom-select-wrapper {
-            position: relative;
-            user-select: none;
-        }
-
+        .dropdown-label { color: var(--text-dark); font-weight: 800; font-size: 1.1rem; margin-bottom: 12px; display: block; }
+        .custom-select-wrapper { position: relative; user-select: none; }
         .custom-select-trigger {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            border: 2px solid var(--primary-blue);
-            border-radius: 25px;
-            color: var(--primary-blue);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: var(--white);
-            transition: all 0.3s;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px; border: 2px solid var(--primary-blue); border-radius: 25px;
+            color: var(--primary-blue); font-size: 1rem; font-weight: 600; cursor: pointer; background: var(--white); transition: all 0.3s;
         }
-
-        .custom-select-trigger.open {
-            border-radius: 20px 20px 0 0;
-            border-bottom: 1px solid transparent;
-        }
-
-        .custom-arrow {
-            width: 0; height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid var(--primary-blue);
-            transition: transform 0.3s;
-        }
-
-        .custom-select-trigger.open .custom-arrow {
-            transform: rotate(180deg);
-        }
-
+        .custom-select-trigger.open { border-radius: 20px 20px 0 0; border-bottom: 1px solid transparent; }
+        .custom-arrow { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid var(--primary-blue); transition: transform 0.3s; }
+        .custom-select-trigger.open .custom-arrow { transform: rotate(180deg); }
         .custom-options {
-            position: absolute;
-            top: 100%; left: 0; right: 0;
-            background: var(--white);
-            border: 2px solid var(--primary-blue);
-            border-top: none;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            display: none;
-            flex-direction: column;
-            z-index: 10;
+            position: absolute; top: 100%; left: 0; right: 0; background: var(--white);
+            border: 2px solid var(--primary-blue); border-top: none; border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1); display: none; flex-direction: column; z-index: 10; overflow: hidden;
         }
-
-        .custom-select-wrapper.open .custom-options {
-            display: flex;
-        }
-
-        .custom-option {
-            padding: 12px 20px;
-            color: var(--text-dark);
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .custom-option:hover {
-            background: #f0f5fa;
-            color: var(--primary-blue);
-        }
+        .custom-select-wrapper.open .custom-options { display: flex; }
+        .custom-option { padding: 12px 20px; color: var(--text-dark); font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .custom-option:hover { background: #f0f5fa; color: var(--primary-blue); }
 
         .btn-submit {
-            margin-top: 20px;
-            width: 100%;
-            padding: 14px;
-            background: var(--primary-blue);
-            color: var(--white);
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: none; /* Muncul setelah matpel dipilih */
+            margin-top: 20px; width: 100%; padding: 14px; background: var(--primary-blue);
+            color: var(--white); border: none; border-radius: 25px; font-size: 1rem;
+            font-weight: 700; cursor: pointer; transition: background 0.3s; display: none;
         }
         .btn-submit:hover { background: var(--accent-blue); }
 
         /* ================= HALAMAN 2: KARTU PENILAIAN ================= */
         .assessment-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 40px;
-            width: 100%;
-            max-width: 900px;
-            display: flex;
-            gap: 50px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            z-index: 2;
+            background: var(--white); border-radius: 20px; padding: 40px; width: 100%;
+            max-width: 900px; display: flex; gap: 50px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 2;
         }
 
-        /* Kiri: Profil Siswa */
-        .student-profile {
-            flex: 0 0 300px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        .student-profile { flex: 0 0 300px; display: flex; flex-direction: column; align-items: center; }
         .student-photo-box {
-            width: 100%;
-            height: 350px;
-            background: #f4f4f4;
-            border-radius: 15px;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            margin-bottom: -20px; /* Overlap dengan nama */
-            position: relative;
+            width: 100%; height: 350px; background: #f4f4f4; border-radius: 15px;
+            overflow: hidden; display: flex; justify-content: center; align-items: flex-end;
+            margin-bottom: -20px; position: relative;
         }
-
-        .student-photo-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
+        .student-photo-box img { width: 100%; height: 100%; object-fit: cover; }
         .student-name {
-            background: var(--primary-blue);
-            color: var(--white);
-            padding: 15px 20px;
-            width: 115%;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 700;
-            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
-            z-index: 2;
+            background: var(--primary-blue); color: var(--white); padding: 15px 20px; width: 115%;
+            text-align: center; font-size: 1.1rem; font-weight: 700;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%); z-index: 2;
         }
 
-        /* Garis Tengah */
-        .card-divider {
-            width: 4px;
-            background: var(--primary-blue);
-            border-radius: 2px;
-            position: relative;
-            margin: 20px 0;
-        }
+        .card-divider { width: 4px; background: var(--primary-blue); border-radius: 2px; position: relative; margin: 20px 0; }
         .card-divider::before, .card-divider::after {
-            content: '';
-            position: absolute;
-            left: -6px;
-            width: 16px; height: 16px;
-            background: var(--primary-blue);
-            border-radius: 50%;
+            content: ''; position: absolute; left: -6px; width: 16px; height: 16px;
+            background: var(--primary-blue); border-radius: 50%;
         }
-        .card-divider::before { top: -10px; }
-        .card-divider::after { bottom: -10px; }
+        .card-divider::before { top: -10px; } .card-divider::after { bottom: -10px; }
 
-        /* Kanan: Form */
-        .assessment-form {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 20px;
-        }
+        .assessment-form { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+        .rating-row h3 { color: var(--text-dark); font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+        .stars-container { display: flex; gap: 10px; }
+        .star-svg { width: 35px; height: 35px; fill: transparent; stroke: var(--primary-blue); stroke-width: 2; cursor: pointer; transition: all 0.2s; }
+        .star-svg.active { fill: var(--primary-blue); }
 
-        .rating-row h3 {
-            color: var(--text-dark);
-            font-size: 1rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .stars-container {
-            display: flex;
-            gap: 10px;
-        }
-
-        .star-svg {
-            width: 35px; height: 35px;
-            fill: transparent;
-            stroke: var(--primary-blue);
-            stroke-width: 2;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .star-svg.active {
-            fill: var(--primary-blue);
-        }
-
-        .notes-row { margin-top: 10px; }
-        .notes-row h3 {
-            color: var(--text-dark);
-            font-size: 1rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
+        .notes-row h3 { color: var(--text-dark); font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
         .notes-textarea {
-            width: 100%;
-            height: 100px;
-            border: 2px solid var(--primary-blue);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 1rem;
-            color: var(--text-dark);
-            resize: none;
-            outline: none;
+            width: 100%; height: 100px; border: 2px solid var(--primary-blue); border-radius: 8px;
+            padding: 12px; font-size: 1rem; color: var(--text-dark); resize: none; outline: none;
         }
 
-        /* Pagination & Back Button */
-        .footer-nav {
-            margin-top: 25px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            z-index: 2;
+        /* Navigasi Bawah (Pagination) */
+        .footer-nav { margin-top: 25px; display: flex; align-items: center; justify-content: center; gap: 20px; z-index: 2; width: 100%; max-width: 900px; position: relative;}
+        .nav-btn {
+            background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid var(--white);
+            padding: 10px 25px; border-radius: 25px; cursor: pointer; font-weight: 700; transition: 0.3s;
         }
+        .nav-btn:hover { background: var(--white); color: var(--primary-blue); }
+        .pagination-text { font-weight: 800; font-size: 1.1rem; flex: 1; text-align: center; }
+        
+        /* Utility untuk layout tombol */
+        .btn-left { position: absolute; left: 0; }
+        .btn-right { position: absolute; right: 0; background: var(--accent-blue); border: none; }
+        .btn-right:hover { background: var(--white); color: var(--accent-blue); }
 
-        .btn-back {
-            background: transparent;
+        /* ================= HALAMAN 3: TERIMA KASIH ================= */
+        .thank-you-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; text-align: center;
+        }
+        .hero-thank-you {
+            height: 250px; margin-bottom: -40px; z-index: 1;
+        }
+        .hero-thank-you img { max-height: 100%; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); }
+        
+        .text-terima-kasih {
+            font-size: 6rem;
+            font-weight: 900;
+            font-style: italic;
             color: var(--white);
-            border: 1px solid var(--white);
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-back:hover { background: rgba(255,255,255,0.2); }
-
-        .pagination-text {
-            font-weight: 700;
-            font-size: 1rem;
+            text-transform: uppercase;
+            text-shadow: 6px 6px 0px #031b36; /* Efek 3D Tebal */
+            z-index: 2;
+            line-height: 1;
         }
 
-        /* ================= MODE MOBILE RESPONSIVE ================= */
+        /* ================= RESPONSIVE ================= */
         @media (max-width: 900px) {
-            .assessment-card {
-                flex-direction: column;
-                padding: 25px;
-                gap: 30px;
-                max-width: 500px;
-            }
+            .assessment-card { flex-direction: column; padding: 25px; gap: 30px; max-width: 500px; }
             .card-divider { display: none; }
             .student-profile { flex: 0 0 auto; width: 100%; }
             .student-name { width: 100%; clip-path: polygon(5% 0, 95% 0, 100% 50%, 95% 100%, 5% 100%, 0 50%); }
             .student-photo-box { height: 280px; }
+            .footer-nav { max-width: 500px; }
+            .btn-left, .btn-right { position: static; }
+            .text-terima-kasih { font-size: 4rem; text-shadow: 4px 4px 0px #031b36; }
         }
-
         @media (max-width: 600px) {
             .title-main { font-size: 2.2rem; }
             .logo-ribbon { padding: 10px 30px 10px 15px; }
-            .logo-icon svg { width: 35px; height: 35px; }
             .dropdown-container { padding: 20px; width: 90%; }
-            .star-svg { width: 30px; height: 30px; }
+            .footer-nav { flex-direction: column; gap: 15px; }
+            .pagination-text { order: -1; }
+            .text-terima-kasih { font-size: 2.8rem; text-shadow: 3px 3px 0px #031b36; margin-top: 20px; }
+            .hero-thank-you { height: 180px; margin-bottom: -20px; }
         }
     </style>
 </head>
@@ -455,7 +248,6 @@
     <header>
         <div class="logo-ribbon">
             <div class="logo-icon">
-                <!-- Ikon Buku Sederhana -->
                 <svg viewBox="0 0 24 24">
                     <path d="M21 4H3c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM3 19V6h8v13H3zm18 0h-8V6h8v13z"/>
                     <path d="M14 9h5v2h-5zm0 3h5v2h-5zM5 9h5v2H5zm0 3h5v2H5z"/>
@@ -468,24 +260,18 @@
         </div>
     </header>
 
-    <!-- HALAMAN 1: PILIH MATPEL -->
     <main id="page-1" class="active">
-        
         <div class="hero-images">
-            <!-- Ganti dengan URL gambar 3 siswa yang berformat .png (transparan) -->
-            <img src="https://via.placeholder.com/320x180.png?text=Ilustrasi+3+Siswa" alt="Ilustrasi Siswa">
+            <img src="https://via.placeholder.com/350x200.png?text=Ilustrasi+3+Siswa" alt="Ilustrasi Siswa">
         </div>
-
         <div class="title-wrapper">
             <div class="badge-sistem">SISTEM</div>
             <h2 class="title-main">PENILAIAN<br>PESERTA DIDIK</h2>
             <div class="subtitle-pill">"Langkah Awal Menuju Masa Depan Gemilang"</div>
             <div class="academic-year">Tahun Ajaran 2026/2027</div>
         </div>
-
         <div class="dropdown-container">
             <span class="dropdown-label">Pilih Mata Pelajaran</span>
-            
             <div class="custom-select-wrapper" id="subjectDropdown">
                 <div class="custom-select-trigger">
                     <span id="selectedSubject">Pilih...</span>
@@ -497,31 +283,26 @@
                     <span class="custom-option" data-value="koding">Koding dan Kecerdasan Artifisial</span>
                 </div>
             </div>
-
-            <button class="btn-submit" id="btnLanjut" onclick="goToPage2()">Lanjutkan</button>
+            <button class="btn-submit" id="btnLanjut" onclick="startAssessment()">Lanjutkan</button>
         </div>
     </main>
 
-    <!-- HALAMAN 2: KARTU PENILAIAN -->
     <main id="page-2">
         <div class="assessment-card">
             
             <div class="student-profile">
                 <div class="student-photo-box">
-                    <!-- Ganti dengan URL foto siswa -->
-                    <img src="https://via.placeholder.com/300x350.png?text=Foto+Siswa" alt="Bagaswara Rahardi">
+                    <img id="ui-student-photo" src="https://via.placeholder.com/300x350.png?text=Foto" alt="Foto Siswa">
                 </div>
-                <div class="student-name">Bagaswara Rahardi</div>
+                <div class="student-name" id="ui-student-name">Nama Siswa</div>
             </div>
 
             <div class="card-divider"></div>
 
             <div class="assessment-form">
-                <!-- Komponen Bintang (Sikap) -->
                 <div class="rating-row">
                     <h3>Penilaian Sikap</h3>
-                    <div class="stars-container">
-                        <!-- Bintang SVG 1-5 -->
+                    <div class="stars-container" id="stars-sikap">
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="1"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="2"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="3"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
@@ -530,10 +311,9 @@
                     </div>
                 </div>
 
-                <!-- Komponen Bintang (Pengetahuan) -->
                 <div class="rating-row">
                     <h3>Penilaian Pengetahuan</h3>
-                    <div class="stars-container">
+                    <div class="stars-container" id="stars-pengetahuan">
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="1"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="2"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="3"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
@@ -542,10 +322,9 @@
                     </div>
                 </div>
 
-                <!-- Komponen Bintang (Keterampilan) -->
                 <div class="rating-row">
                     <h3>Penilaian Keterampilan</h3>
-                    <div class="stars-container">
+                    <div class="stars-container" id="stars-keterampilan">
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="1"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="2"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
                         <svg class="star-svg" viewBox="0 0 24 24" data-val="3"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
@@ -556,19 +335,29 @@
 
                 <div class="notes-row">
                     <h3>Catatan</h3>
-                    <textarea class="notes-textarea" placeholder="Ketik catatan di sini..."></textarea>
+                    <textarea class="notes-textarea" id="ui-notes" placeholder="Ketik catatan di sini..."></textarea>
                 </div>
             </div>
         </div>
 
         <div class="footer-nav">
-            <button class="btn-back" onclick="goToPage1()">&#8592; Kembali</button>
-            <span class="pagination-text">1 of 32</span>
+            <button class="nav-btn btn-left" id="btnPrev" onclick="prevStudent()">&#8592; Sebelumnya</button>
+            <span class="pagination-text" id="ui-pagination">1 of 32</span>
+            <button class="nav-btn btn-right" id="btnNext" onclick="nextStudent()">Selanjutnya &#8594;</button>
+        </div>
+    </main>
+
+    <main id="page-3">
+        <div class="thank-you-container">
+            <div class="hero-thank-you">
+                <img src="https://via.placeholder.com/450x250.png?text=Ilustrasi+3+Siswa" alt="Terima Kasih">
+            </div>
+            <h1 class="text-terima-kasih">TERIMA KASIH</h1>
         </div>
     </main>
 
     <script>
-        // Logika Dropdown Kustom
+        /* --- LOGIKA DROPDOWN MATPEL --- */
         const dropdownWrapper = document.getElementById('subjectDropdown');
         const trigger = document.querySelector('.custom-select-trigger');
         const options = document.querySelectorAll('.custom-option');
@@ -576,71 +365,29 @@
         const btnLanjut = document.getElementById('btnLanjut');
         let isSubjectSelected = false;
 
-        // Buka/Tutup Dropdown
         trigger.addEventListener('click', () => {
-            dropdownWrapper.classList.toggle('open');
-            trigger.classList.toggle('open');
+            dropdownWrapper.classList.toggle('open'); trigger.classList.toggle('open');
         });
 
-        // Pilih Opsi
         options.forEach(option => {
             option.addEventListener('click', function() {
                 selectedText.textContent = this.textContent;
                 selectedText.style.color = "var(--text-dark)";
-                dropdownWrapper.classList.remove('open');
-                trigger.classList.remove('open');
-                
-                // Tampilkan tombol lanjut
-                isSubjectSelected = true;
-                btnLanjut.style.display = 'block';
+                dropdownWrapper.classList.remove('open'); trigger.classList.remove('open');
+                isSubjectSelected = true; btnLanjut.style.display = 'block';
             });
         });
 
-        // Tutup dropdown jika klik di luar area
         window.addEventListener('click', (e) => {
             if (!dropdownWrapper.contains(e.target)) {
-                dropdownWrapper.classList.remove('open');
-                trigger.classList.remove('open');
+                dropdownWrapper.classList.remove('open'); trigger.classList.remove('open');
             }
         });
 
-        // Navigasi Halaman
-        function goToPage2() {
-            if(isSubjectSelected) {
-                document.getElementById('page-1').classList.remove('active');
-                document.getElementById('page-2').classList.add('active');
-                window.scrollTo(0,0);
-            }
-        }
-
-        function goToPage1() {
-            document.getElementById('page-2').classList.remove('active');
-            document.getElementById('page-1').classList.add('active');
-            window.scrollTo(0,0);
-        }
-
-        // Logika Rating Bintang SVG
-        const starContainers = document.querySelectorAll('.stars-container');
-        
-        starContainers.forEach(container => {
-            const stars = container.querySelectorAll('.star-svg');
-            
-            stars.forEach(star => {
-                star.addEventListener('click', function() {
-                    const val = parseInt(this.getAttribute('data-val'));
-                    
-                    // Reset semua bintang dalam baris ini
-                    stars.forEach(s => s.classList.remove('active'));
-                    
-                    // Aktifkan bintang hingga index yang diklik
-                    stars.forEach(s => {
-                        if(parseInt(s.getAttribute('data-val')) <= val) {
-                            s.classList.add('active');
-                        }
-                    });
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+        /* --- DATA SISWA (DINAMIS) --- */
+        // Untuk simulasi sesuai gambar, kita gunakan 2 data (mewakili awal dan akhir)
+        const studentData = [
+            {
+                name: "Bagaswara Rahardi",
+                photoUrl: "https://via.placeholder.com/300x350.png?text=Foto+Bagaswara",
+                indexTex
