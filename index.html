@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Penilaian Peserta Didik</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-blue: #0b3d6e;
-            --secondary-blue: #155799;
+            --bg-top: #0b457e;
+            --bg-bottom: #052649;
+            --primary-blue: #093c71;
+            --accent-blue: #1565c0;
+            --text-dark: #0a2d52;
             --white: #ffffff;
-            --text-dark: #333333;
+            --grid-color: rgba(255, 255, 255, 0.15);
         }
 
         * {
@@ -18,342 +21,446 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            /* Simulasi background biru dengan grid */
-            background: linear-gradient(to bottom, var(--primary-blue), var(--secondary-blue));
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
             overflow-x: hidden;
             position: relative;
+            color: var(--white);
         }
 
-        /* Overlay Grid */
-        body::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 30%;
+        /* --- BACKGROUND CLOUDS & PERSPECTIVE GRID --- */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -2;
+            /* Simulasi Awan Sederhana dengan Radial Gradient */
             background-image: 
-                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 40px 40px;
-            transform: perspective(500px) rotateX(60deg);
+                radial-gradient(circle at 15% 30%, rgba(255,255,255,0.08) 0%, transparent 20%),
+                radial-gradient(circle at 85% 20%, rgba(255,255,255,0.06) 0%, transparent 15%),
+                radial-gradient(circle at 75% 50%, rgba(255,255,255,0.05) 0%, transparent 25%);
+        }
+
+        .grid-floor {
+            position: fixed;
+            bottom: -10%; left: -50%; width: 200%; height: 50%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(600px) rotateX(70deg);
             z-index: -1;
         }
 
-        /* Header / Logo */
+        /* --- HEADER / LOGO RIBBON --- */
         header {
-            width: 100%;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: flex-start;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 10;
         }
 
-        .logo-container {
+        .logo-ribbon {
             background: var(--white);
-            padding: 10px 30px;
-            border-radius: 0 0 20px 0;
-            clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%);
+            padding: 15px 40px 15px 20px;
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-top: -20px;
-            margin-left: -40px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
         }
 
-        .logo-container img {
-            height: 40px;
-            /* Placeholder styling */
-            background-color: #ddd;
-            width: 40px;
-            display: inline-block;
+        .logo-icon svg {
+            width: 45px; height: 45px;
+            fill: var(--primary-blue);
         }
 
         .logo-text {
             color: var(--primary-blue);
+            line-height: 1.1;
         }
 
-        .logo-text h1 {
-            font-size: 1.2rem;
-            font-weight: 800;
-        }
+        .logo-text h1 { font-size: 1.2rem; font-weight: 800; }
+        .logo-text p { font-size: 0.7rem; font-weight: 600; letter-spacing: 1px; }
 
-        .logo-text p {
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-        }
-
-        /* Container Utama */
-        .main-container {
+        /* --- LAYOUT UTAMA --- */
+        main {
             flex: 1;
-            width: 100%;
-            max-width: 900px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-        }
-
-        /* --- HALAMAN 1: PEMILIHAN MATPEL --- */
-        #screen-1 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 80px 20px 40px;
             width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: none; /* Diatur via JS */
         }
 
-        .hero-image {
-            height: 200px;
-            width: 300px;
-            background-color: rgba(255,255,255,0.1); /* Placeholder untuk gambar siswa */
-            border-radius: 10px;
-            margin-bottom: 20px;
+        main.active {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.8rem;
         }
 
-        .title-section {
-            text-align: center;
-            color: var(--white);
-            margin-bottom: 30px;
-        }
-
-        .badge-sistem {
-            background: var(--secondary-blue);
-            padding: 5px 30px;
-            border: 2px solid var(--white);
-            display: inline-block;
-            font-weight: 800;
-            letter-spacing: 2px;
-            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
-            margin-bottom: -10px;
+        /* ================= HALAMAN 1: HERO & MATPEL ================= */
+        .hero-images {
+            height: 180px;
+            width: 320px;
             position: relative;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 2;
+        }
+        
+        .hero-images img {
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
+        }
+
+        .title-wrapper {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
             z-index: 2;
         }
 
-        .title-main {
-            font-size: 3rem;
+        .badge-sistem {
+            background: var(--accent-blue);
+            border: 2px solid var(--white);
+            padding: 4px 40px;
+            font-size: 1rem;
             font-weight: 800;
-            font-style: italic;
-            line-height: 1.1;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+            margin-bottom: -5px; /* Menumpuk dengan teks utama */
+            z-index: 3;
         }
 
-        .subtitle-box {
-            border: 2px solid var(--white);
+        .title-main {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-style: italic;
+            line-height: 1;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+        }
+
+        .subtitle-pill {
+            border: 1.5px solid var(--white);
             padding: 8px 30px;
-            border-radius: 20px;
-            margin-top: 15px;
-            display: inline-block;
+            border-radius: 30px;
             font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.1);
         }
 
         .academic-year {
             margin-top: 15px;
-            font-weight: 600;
             font-size: 1.2rem;
+            font-weight: 700;
         }
 
-        .dropdown-card {
+        /* Custom Dropdown (Sesuai Gambar 1) */
+        .dropdown-container {
             background: var(--white);
-            padding: 20px 30px;
             border-radius: 15px;
+            padding: 25px 30px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            text-align: left;
+            max-width: 480px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 5;
         }
 
-        .dropdown-card label {
-            color: var(--primary-blue);
+        .dropdown-label {
+            color: var(--text-dark);
             font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
             display: block;
-            margin-bottom: 10px;
         }
 
-        .custom-select {
-            width: 100%;
-            padding: 12px 15px;
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+        }
+
+        .custom-select-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
             border: 2px solid var(--primary-blue);
             border-radius: 25px;
-            font-size: 1rem;
             color: var(--primary-blue);
-            appearance: none;
-            background: transparent url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230b3d6e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 15px top 50%;
-            background-size: 15px auto;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            outline: none;
+            background: var(--white);
+            transition: all 0.3s;
         }
 
-        .btn-lanjut {
-            margin-top: 15px;
+        .custom-select-trigger.open {
+            border-radius: 20px 20px 0 0;
+            border-bottom: 1px solid transparent;
+        }
+
+        .custom-arrow {
+            width: 0; height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid var(--primary-blue);
+            transition: transform 0.3s;
+        }
+
+        .custom-select-trigger.open .custom-arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-options {
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: var(--white);
+            border: 2px solid var(--primary-blue);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .custom-select-wrapper.open .custom-options {
+            display: flex;
+        }
+
+        .custom-option {
+            padding: 12px 20px;
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .custom-option:hover {
+            background: #f0f5fa;
+            color: var(--primary-blue);
+        }
+
+        .btn-submit {
+            margin-top: 20px;
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: var(--primary-blue);
             color: var(--white);
             border: none;
             border-radius: 25px;
-            font-weight: 600;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background 0.3s;
+            display: none; /* Muncul setelah matpel dipilih */
         }
-        .btn-lanjut:hover { background: var(--secondary-blue); }
+        .btn-submit:hover { background: var(--accent-blue); }
 
-
-        /* --- HALAMAN 2: PENILAIAN --- */
-        #screen-2 {
-            display: none; /* Disembunyikan secara default */
-            width: 100%;
-            max-width: 800px;
-        }
-
+        /* ================= HALAMAN 2: KARTU PENILAIAN ================= */
         .assessment-card {
             background: var(--white);
             border-radius: 20px;
-            padding: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
             display: flex;
-            gap: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            position: relative;
+            gap: 50px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 2;
         }
 
-        /* Kolom Kiri: Profil Siswa */
+        /* Kiri: Profil Siswa */
         .student-profile {
-            flex: 0 0 35%;
+            flex: 0 0 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
+        }
+
+        .student-photo-box {
+            width: 100%;
+            height: 350px;
+            background: #f4f4f4;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: -20px; /* Overlap dengan nama */
             position: relative;
         }
 
-        .student-photo {
+        .student-photo-box img {
             width: 100%;
-            height: 250px;
-            background-color: #eee; /* Placeholder foto */
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #aaa;
-            margin-bottom: 20px;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .student-name-badge {
+        .student-name {
             background: var(--primary-blue);
             color: var(--white);
-            padding: 10px 20px;
-            width: 110%;
+            padding: 15px 20px;
+            width: 115%;
             text-align: center;
-            font-weight: 600;
-            clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
-            margin-bottom: -15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0 50%);
+            z-index: 2;
         }
 
-        /* Divider Vertikal */
-        .divider {
+        /* Garis Tengah */
+        .card-divider {
             width: 4px;
-            background: var(--secondary-blue);
+            background: var(--primary-blue);
             border-radius: 2px;
             position: relative;
+            margin: 20px 0;
         }
-        .divider::before, .divider::after {
+        .card-divider::before, .card-divider::after {
             content: '';
             position: absolute;
             left: -6px;
-            width: 16px;
-            height: 16px;
-            background: var(--secondary-blue);
+            width: 16px; height: 16px;
+            background: var(--primary-blue);
             border-radius: 50%;
         }
-        .divider::before { top: 0; }
-        .divider::after { bottom: 0; }
+        .card-divider::before { top: -10px; }
+        .card-divider::after { bottom: -10px; }
 
-
-        /* Kolom Kanan: Form Penilaian */
+        /* Kanan: Form */
         .assessment-form {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            justify-content: center;
+            gap: 20px;
         }
 
-        .rating-group h3 {
-            color: var(--primary-blue);
+        .rating-row h3 {
+            color: var(--text-dark);
             font-size: 1rem;
-            margin-bottom: 5px;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
 
-        .stars {
-            color: transparent;
-            -webkit-text-stroke: 2px var(--secondary-blue);
-            font-size: 2rem;
+        .stars-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .star-svg {
+            width: 35px; height: 35px;
+            fill: transparent;
+            stroke: var(--primary-blue);
+            stroke-width: 2;
             cursor: pointer;
-            letter-spacing: 5px;
-        }
-        
-        .stars span {
-            transition: color 0.2s;
+            transition: all 0.2s;
         }
 
-        .stars span.active {
-            color: var(--secondary-blue);
-            -webkit-text-stroke: 0;
+        .star-svg.active {
+            fill: var(--primary-blue);
         }
 
-        .notes-group {
-            margin-top: 10px;
-        }
-        .notes-group h3 {
-            color: var(--primary-blue);
+        .notes-row { margin-top: 10px; }
+        .notes-row h3 {
+            color: var(--text-dark);
             font-size: 1rem;
-            margin-bottom: 5px;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
 
-        .notes-area {
+        .notes-textarea {
             width: 100%;
-            height: 80px;
+            height: 100px;
             border: 2px solid var(--primary-blue);
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 0.9rem;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            color: var(--text-dark);
             resize: none;
             outline: none;
         }
 
-        .pagination {
-            color: var(--white);
-            font-weight: 600;
-            margin-top: 20px;
-            text-align: center;
+        /* Pagination & Back Button */
+        .footer-nav {
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 2;
         }
 
-        /* Responsivitas */
-        @media (max-width: 768px) {
-            .assessment-card { flex-direction: column; gap: 20px; }
-            .divider { display: none; }
-            .student-profile { flex: 0 0 auto; }
-            .student-name-badge { width: 100%; }
+        .btn-back {
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--white);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.2); }
+
+        .pagination-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* ================= MODE MOBILE RESPONSIVE ================= */
+        @media (max-width: 900px) {
+            .assessment-card {
+                flex-direction: column;
+                padding: 25px;
+                gap: 30px;
+                max-width: 500px;
+            }
+            .card-divider { display: none; }
+            .student-profile { flex: 0 0 auto; width: 100%; }
+            .student-name { width: 100%; clip-path: polygon(5% 0, 95% 0, 100% 50%, 95% 100%, 5% 100%, 0 50%); }
+            .student-photo-box { height: 280px; }
+        }
+
+        @media (max-width: 600px) {
+            .title-main { font-size: 2.2rem; }
+            .logo-ribbon { padding: 10px 30px 10px 15px; }
+            .logo-icon svg { width: 35px; height: 35px; }
+            .dropdown-container { padding: 20px; width: 90%; }
+            .star-svg { width: 30px; height: 30px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="bg-overlay"></div>
+    <div class="grid-floor"></div>
+
     <header>
-        <div class="logo-container">
-            <!-- Ganti src dengan logo asli SMP Telkom Makassar -->
-            <div class="logo-placeholder">📘</div> 
+        <div class="logo-ribbon">
+            <div class="logo-icon">
+                <!-- Ikon Buku Sederhana -->
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 4H3c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM3 19V6h8v13H3zm18 0h-8V6h8v13z"/>
+                    <path d="M14 9h5v2h-5zm0 3h5v2h-5zM5 9h5v2H5zm0 3h5v2H5z"/>
+                </svg>
+            </div>
             <div class="logo-text">
                 <h1>SMP</h1>
                 <p>TELKOM MAKASSAR</p>
@@ -361,116 +468,173 @@
         </div>
     </header>
 
-    <div class="main-container">
+    <!-- HALAMAN 1: PILIH MATPEL -->
+    <main id="page-1" class="active">
         
-        <!-- ================= HALAMAN 1 ================= -->
-        <div id="screen-1">
-            <!-- Tempat untuk ilustrasi 3 siswa -->
-            <div class="hero-image">[Ilustrasi 3 Siswa]</div> 
-
-            <div class="title-section">
-                <div class="badge-sistem">SISTEM</div>
-                <h2 class="title-main">PENILAIAN<br>PESERTA DIDIK</h2>
-                <div class="subtitle-box">"Langkah Awal Menuju Masa Depan Gemilang"</div>
-                <div class="academic-year">Tahun Ajaran 2026/2027</div>
-            </div>
-
-            <div class="dropdown-card">
-                <label for="subjectSelect">Pilih Mata Pelajaran</label>
-                <select id="subjectSelect" class="custom-select">
-                    <option value="" disabled selected>Pilih...</option>
-                    <option value="indonesia">Bahasa Indonesia</option>
-                    <option value="matematika">Matematika</option>
-                    <option value="koding">Koding dan Kecerdasan Artifisial</option>
-                </select>
-                <!-- Tombol aksi untuk melanjutkan ke halaman penilaian -->
-                <button class="btn-lanjut" onclick="goToAssessment()">Lanjutkan Penilaian</button>
-            </div>
+        <div class="hero-images">
+            <!-- Ganti dengan URL gambar 3 siswa yang berformat .png (transparan) -->
+            <img src="https://via.placeholder.com/320x180.png?text=Ilustrasi+3+Siswa" alt="Ilustrasi Siswa">
         </div>
 
-        <!-- ================= HALAMAN 2 ================= -->
-        <div id="screen-2">
-            <div class="assessment-card">
-                
-                <div class="student-profile">
-                    <!-- Tempat untuk foto siswa -->
-                    <div class="student-photo">[Foto Siswa]</div>
-                    <div class="student-name-badge">Bagaswara Rahardi</div>
-                </div>
+        <div class="title-wrapper">
+            <div class="badge-sistem">SISTEM</div>
+            <h2 class="title-main">PENILAIAN<br>PESERTA DIDIK</h2>
+            <div class="subtitle-pill">"Langkah Awal Menuju Masa Depan Gemilang"</div>
+            <div class="academic-year">Tahun Ajaran 2026/2027</div>
+        </div>
 
-                <div class="divider"></div>
-
-                <div class="assessment-form">
-                    <div class="rating-group">
-                        <h3>Penilaian Sikap</h3>
-                        <div class="stars" data-category="sikap">
-                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
-                        </div>
-                    </div>
-                    
-                    <div class="rating-group">
-                        <h3>Penilaian Pengetahuan</h3>
-                        <div class="stars" data-category="pengetahuan">
-                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
-                        </div>
-                    </div>
-
-                    <div class="rating-group">
-                        <h3>Penilaian Keterampilan</h3>
-                        <div class="stars" data-category="keterampilan">
-                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
-                        </div>
-                    </div>
-
-                    <div class="notes-group">
-                        <h3>Catatan</h3>
-                        <textarea class="notes-area" placeholder="Masukkan catatan untuk siswa..."></textarea>
-                    </div>
-                </div>
-
-            </div>
+        <div class="dropdown-container">
+            <span class="dropdown-label">Pilih Mata Pelajaran</span>
             
-            <div class="pagination">
-                <span style="cursor:pointer; margin-right: 15px;" onclick="goBack()">&#8592; Kembali</span>
-                1 of 32
+            <div class="custom-select-wrapper" id="subjectDropdown">
+                <div class="custom-select-trigger">
+                    <span id="selectedSubject">Pilih...</span>
+                    <div class="custom-arrow"></div>
+                </div>
+                <div class="custom-options">
+                    <span class="custom-option" data-value="indonesia">Bahasa Indonesia</span>
+                    <span class="custom-option" data-value="matematika">Matematika</span>
+                    <span class="custom-option" data-value="koding">Koding dan Kecerdasan Artifisial</span>
+                </div>
+            </div>
+
+            <button class="btn-submit" id="btnLanjut" onclick="goToPage2()">Lanjutkan</button>
+        </div>
+    </main>
+
+    <!-- HALAMAN 2: KARTU PENILAIAN -->
+    <main id="page-2">
+        <div class="assessment-card">
+            
+            <div class="student-profile">
+                <div class="student-photo-box">
+                    <!-- Ganti dengan URL foto siswa -->
+                    <img src="https://via.placeholder.com/300x350.png?text=Foto+Siswa" alt="Bagaswara Rahardi">
+                </div>
+                <div class="student-name">Bagaswara Rahardi</div>
+            </div>
+
+            <div class="card-divider"></div>
+
+            <div class="assessment-form">
+                <!-- Komponen Bintang (Sikap) -->
+                <div class="rating-row">
+                    <h3>Penilaian Sikap</h3>
+                    <div class="stars-container">
+                        <!-- Bintang SVG 1-5 -->
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="1"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="2"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="3"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="4"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="5"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                    </div>
+                </div>
+
+                <!-- Komponen Bintang (Pengetahuan) -->
+                <div class="rating-row">
+                    <h3>Penilaian Pengetahuan</h3>
+                    <div class="stars-container">
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="1"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="2"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="3"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="4"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="5"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                    </div>
+                </div>
+
+                <!-- Komponen Bintang (Keterampilan) -->
+                <div class="rating-row">
+                    <h3>Penilaian Keterampilan</h3>
+                    <div class="stars-container">
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="1"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="2"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="3"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="4"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                        <svg class="star-svg" viewBox="0 0 24 24" data-val="5"><polygon points="12,2 15,9 22,9 17,14 18,21 12,17 6,21 7,14 2,9 9,9"/></svg>
+                    </div>
+                </div>
+
+                <div class="notes-row">
+                    <h3>Catatan</h3>
+                    <textarea class="notes-textarea" placeholder="Ketik catatan di sini..."></textarea>
+                </div>
             </div>
         </div>
 
-    </div>
+        <div class="footer-nav">
+            <button class="btn-back" onclick="goToPage1()">&#8592; Kembali</button>
+            <span class="pagination-text">1 of 32</span>
+        </div>
+    </main>
 
     <script>
-        // Fungsi Navigasi Antar Layar
-        function goToAssessment() {
-            const select = document.getElementById('subjectSelect');
-            if(select.value === "") {
-                alert("Silakan pilih mata pelajaran terlebih dahulu.");
-                return;
+        // Logika Dropdown Kustom
+        const dropdownWrapper = document.getElementById('subjectDropdown');
+        const trigger = document.querySelector('.custom-select-trigger');
+        const options = document.querySelectorAll('.custom-option');
+        const selectedText = document.getElementById('selectedSubject');
+        const btnLanjut = document.getElementById('btnLanjut');
+        let isSubjectSelected = false;
+
+        // Buka/Tutup Dropdown
+        trigger.addEventListener('click', () => {
+            dropdownWrapper.classList.toggle('open');
+            trigger.classList.toggle('open');
+        });
+
+        // Pilih Opsi
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                selectedText.textContent = this.textContent;
+                selectedText.style.color = "var(--text-dark)";
+                dropdownWrapper.classList.remove('open');
+                trigger.classList.remove('open');
+                
+                // Tampilkan tombol lanjut
+                isSubjectSelected = true;
+                btnLanjut.style.display = 'block';
+            });
+        });
+
+        // Tutup dropdown jika klik di luar area
+        window.addEventListener('click', (e) => {
+            if (!dropdownWrapper.contains(e.target)) {
+                dropdownWrapper.classList.remove('open');
+                trigger.classList.remove('open');
             }
-            document.getElementById('screen-1').style.display = 'none';
-            document.getElementById('screen-2').style.display = 'block';
+        });
+
+        // Navigasi Halaman
+        function goToPage2() {
+            if(isSubjectSelected) {
+                document.getElementById('page-1').classList.remove('active');
+                document.getElementById('page-2').classList.add('active');
+                window.scrollTo(0,0);
+            }
         }
 
-        function goBack() {
-            document.getElementById('screen-2').style.display = 'none';
-            document.getElementById('screen-1').style.display = 'flex';
+        function goToPage1() {
+            document.getElementById('page-2').classList.remove('active');
+            document.getElementById('page-1').classList.add('active');
+            window.scrollTo(0,0);
         }
 
-        // Logika Interaktif Rating Bintang
-        const starGroups = document.querySelectorAll('.stars');
-
-        starGroups.forEach(group => {
-            const stars = group.querySelectorAll('span');
+        // Logika Rating Bintang SVG
+        const starContainers = document.querySelectorAll('.stars-container');
+        
+        starContainers.forEach(container => {
+            const stars = container.querySelectorAll('.star-svg');
             
             stars.forEach(star => {
                 star.addEventListener('click', function() {
-                    const ratingValue = this.getAttribute('data-val');
+                    const val = parseInt(this.getAttribute('data-val'));
                     
-                    // Reset semua bintang di grup ini
+                    // Reset semua bintang dalam baris ini
                     stars.forEach(s => s.classList.remove('active'));
                     
-                    // Aktifkan bintang dari 1 hingga yang di-klik
+                    // Aktifkan bintang hingga index yang diklik
                     stars.forEach(s => {
-                        if(s.getAttribute('data-val') <= ratingValue) {
+                        if(parseInt(s.getAttribute('data-val')) <= val) {
                             s.classList.add('active');
                         }
                     });
