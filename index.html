@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Penilaian Peserta Didik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,800;1,800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0b3d6e;
+            --secondary-blue: #155799;
+            --white: #ffffff;
+            --text-dark: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            /* Simulasi background biru dengan grid */
+            background: linear-gradient(to bottom, var(--primary-blue), var(--secondary-blue));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Overlay Grid */
+        body::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: perspective(500px) rotateX(60deg);
+            z-index: -1;
+        }
+
+        /* Header / Logo */
+        header {
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .logo-container {
+            background: var(--white);
+            padding: 10px 30px;
+            border-radius: 0 0 20px 0;
+            clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: -20px;
+            margin-left: -40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .logo-container img {
+            height: 40px;
+            /* Placeholder styling */
+            background-color: #ddd;
+            width: 40px;
+            display: inline-block;
+        }
+
+        .logo-text {
+            color: var(--primary-blue);
+        }
+
+        .logo-text h1 {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        /* Container Utama */
+        .main-container {
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* --- HALAMAN 1: PEMILIHAN MATPEL --- */
+        #screen-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hero-image {
+            height: 200px;
+            width: 300px;
+            background-color: rgba(255,255,255,0.1); /* Placeholder untuk gambar siswa */
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .title-section {
+            text-align: center;
+            color: var(--white);
+            margin-bottom: 30px;
+        }
+
+        .badge-sistem {
+            background: var(--secondary-blue);
+            padding: 5px 30px;
+            border: 2px solid var(--white);
+            display: inline-block;
+            font-weight: 800;
+            letter-spacing: 2px;
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+            margin-bottom: -10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title-main {
+            font-size: 3rem;
+            font-weight: 800;
+            font-style: italic;
+            line-height: 1.1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle-box {
+            border: 2px solid var(--white);
+            padding: 8px 30px;
+            border-radius: 20px;
+            margin-top: 15px;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .academic-year {
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .dropdown-card {
+            background: var(--white);
+            padding: 20px 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            text-align: left;
+        }
+
+        .dropdown-card label {
+            color: var(--primary-blue);
+            font-weight: 800;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 25px;
+            font-size: 1rem;
+            color: var(--primary-blue);
+            appearance: none;
+            background: transparent url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230b3d6e%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 15px top 50%;
+            background-size: 15px auto;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-lanjut {
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-lanjut:hover { background: var(--secondary-blue); }
+
+
+        /* --- HALAMAN 2: PENILAIAN --- */
+        #screen-2 {
+            display: none; /* Disembunyikan secara default */
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .assessment-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            gap: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* Kolom Kiri: Profil Siswa */
+        .student-profile {
+            flex: 0 0 35%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .student-photo {
+            width: 100%;
+            height: 250px;
+            background-color: #eee; /* Placeholder foto */
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .student-name-badge {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 10px 20px;
+            width: 110%;
+            text-align: center;
+            font-weight: 600;
+            clip-path: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+            margin-bottom: -15px;
+        }
+
+        /* Divider Vertikal */
+        .divider {
+            width: 4px;
+            background: var(--secondary-blue);
+            border-radius: 2px;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            left: -6px;
+            width: 16px;
+            height: 16px;
+            background: var(--secondary-blue);
+            border-radius: 50%;
+        }
+        .divider::before { top: 0; }
+        .divider::after { bottom: 0; }
+
+
+        /* Kolom Kanan: Form Penilaian */
+        .assessment-form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .rating-group h3 {
+            color: var(--primary-blue);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .stars {
+            color: transparent;
+            -webkit-text-stroke: 2px var(--secondary-blue);
+            font-size: 2rem;
+            cursor: pointer;
+            letter-spacing: 5px;
+        }
+        
+        .stars span {
+            transition: color 0.2s;
+        }
+
+        .stars span.active {
+            color: var(--secondary-blue);
+            -webkit-text-stroke: 0;
+        }
+
+        .notes-group {
+            margin-top: 10px;
+        }
+        .notes-group h3 {
+            color: var(--primary-blue);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .notes-area {
+            width: 100%;
+            height: 80px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+        }
+
+        .pagination {
+            color: var(--white);
+            font-weight: 600;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Responsivitas */
+        @media (max-width: 768px) {
+            .assessment-card { flex-direction: column; gap: 20px; }
+            .divider { display: none; }
+            .student-profile { flex: 0 0 auto; }
+            .student-name-badge { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <!-- Ganti src dengan logo asli SMP Telkom Makassar -->
+            <div class="logo-placeholder">📘</div> 
+            <div class="logo-text">
+                <h1>SMP</h1>
+                <p>TELKOM MAKASSAR</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- ================= HALAMAN 1 ================= -->
+        <div id="screen-1">
+            <!-- Tempat untuk ilustrasi 3 siswa -->
+            <div class="hero-image">[Ilustrasi 3 Siswa]</div> 
+
+            <div class="title-section">
+                <div class="badge-sistem">SISTEM</div>
+                <h2 class="title-main">PENILAIAN<br>PESERTA DIDIK</h2>
+                <div class="subtitle-box">"Langkah Awal Menuju Masa Depan Gemilang"</div>
+                <div class="academic-year">Tahun Ajaran 2026/2027</div>
+            </div>
+
+            <div class="dropdown-card">
+                <label for="subjectSelect">Pilih Mata Pelajaran</label>
+                <select id="subjectSelect" class="custom-select">
+                    <option value="" disabled selected>Pilih...</option>
+                    <option value="indonesia">Bahasa Indonesia</option>
+                    <option value="matematika">Matematika</option>
+                    <option value="koding">Koding dan Kecerdasan Artifisial</option>
+                </select>
+                <!-- Tombol aksi untuk melanjutkan ke halaman penilaian -->
+                <button class="btn-lanjut" onclick="goToAssessment()">Lanjutkan Penilaian</button>
+            </div>
+        </div>
+
+        <!-- ================= HALAMAN 2 ================= -->
+        <div id="screen-2">
+            <div class="assessment-card">
+                
+                <div class="student-profile">
+                    <!-- Tempat untuk foto siswa -->
+                    <div class="student-photo">[Foto Siswa]</div>
+                    <div class="student-name-badge">Bagaswara Rahardi</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="assessment-form">
+                    <div class="rating-group">
+                        <h3>Penilaian Sikap</h3>
+                        <div class="stars" data-category="sikap">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-group">
+                        <h3>Penilaian Pengetahuan</h3>
+                        <div class="stars" data-category="pengetahuan">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                        </div>
+                    </div>
+
+                    <div class="rating-group">
+                        <h3>Penilaian Keterampilan</h3>
+                        <div class="stars" data-category="keterampilan">
+                            <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                        </div>
+                    </div>
+
+                    <div class="notes-group">
+                        <h3>Catatan</h3>
+                        <textarea class="notes-area" placeholder="Masukkan catatan untuk siswa..."></textarea>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="pagination">
+                <span style="cursor:pointer; margin-right: 15px;" onclick="goBack()">&#8592; Kembali</span>
+                1 of 32
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Fungsi Navigasi Antar Layar
+        function goToAssessment() {
+            const select = document.getElementById('subjectSelect');
+            if(select.value === "") {
+                alert("Silakan pilih mata pelajaran terlebih dahulu.");
+                return;
+            }
+            document.getElementById('screen-1').style.display = 'none';
+            document.getElementById('screen-2').style.display = 'block';
+        }
+
+        function goBack() {
+            document.getElementById('screen-2').style.display = 'none';
+            document.getElementById('screen-1').style.display = 'flex';
+        }
+
+        // Logika Interaktif Rating Bintang
+        const starGroups = document.querySelectorAll('.stars');
+
+        starGroups.forEach(group => {
+            const stars = group.querySelectorAll('span');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const ratingValue = this.getAttribute('data-val');
+                    
+                    // Reset semua bintang di grup ini
+                    stars.forEach(s => s.classList.remove('active'));
+                    
+                    // Aktifkan bintang dari 1 hingga yang di-klik
+                    stars.forEach(s => {
+                        if(s.getAttribute('data-val') <= ratingValue) {
+                            s.classList.add('active');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
